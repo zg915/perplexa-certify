@@ -13,7 +13,9 @@ const Index = () => {
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="transition-all duration-300">
-        {activeTab === "answer" && <AnswerContent />}
+        {activeTab === "answer" && (
+          <AnswerContent onNavigateToCertifications={() => setActiveTab("certifications")} />
+        )}
         {activeTab === "certifications" && <CertificationsGrid />}
       </div>
     </div>
