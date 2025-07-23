@@ -1,11 +1,20 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import SearchHeader from "@/components/SearchHeader";
+import TabBar from "@/components/TabBar";
+import AnswerContent from "@/components/AnswerContent";
+import CertificationsGrid from "@/components/CertificationsGrid";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("answer");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <SearchHeader />
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      <div className="transition-all duration-300">
+        {activeTab === "answer" && <AnswerContent />}
+        {activeTab === "certifications" && <CertificationsGrid />}
       </div>
     </div>
   );
