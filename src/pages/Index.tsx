@@ -6,26 +6,54 @@ import AnswerContent from "@/components/AnswerContent";
 import CertificationsGrid from "@/components/CertificationsGrid";
 import ChatInput from "@/components/ChatInput";
 
+interface Flashcard {
+  name: string;
+  issuing_body: string;
+  region: string;
+  description: string;
+  classifications: string[];
+  mandatory: boolean;
+  validity: string;
+  official_link: string;
+}
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("answer");
+  const [answer, setAnswer] = useState("");
+  const [certifications, setCertifications] = useState<Flashcard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [userQuestion, setUserQuestion] = useState("");
+
+  const handleStream = (ans: string, certs: Flashcard[], isLoading?: boolean, question?: string) => {
+    setAnswer(ans);
+    setCertifications(certs);
+    if (typeof isLoading === 'boolean') setLoading(isLoading);
+    if (question) setUserQuestion(question);
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
       
-      <div className="flex-1">
-        <SearchHeader />
+      <div className="flex-1 ml-12">
+        <SearchHeader userQuestion={userQuestion} />
         <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
         
         <div className="transition-all duration-300">
+          {activeTab === "certifications" && <CertificationsGrid streamedCertifications={certifications} loading={loading} />}
           {activeTab === "answer" && (
-            <AnswerContent onNavigateToCertifications={() => setActiveTab("certifications")} />
+            <AnswerContent
+              onNavigateToCertifications={() => setActiveTab("certifications")}
+              answer={answer}
+              certifications={certifications}
+              loading={loading}
+            />
           )}
-          {activeTab === "certifications" && <CertificationsGrid />}
+          
         </div>
       </div>
       
-      <ChatInput />
+      <ChatInput onStream={(ans, certs, isLoading, question) => handleStream(ans, certs, isLoading, question)} />
     </div>
   );
 };
