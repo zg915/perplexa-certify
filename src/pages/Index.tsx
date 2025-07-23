@@ -13,7 +13,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex">
       <Sidebar />
       
-      <div className="flex-1">
+       <div className="flex-1 ml-12">
         <SearchHeader />
         <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
         
