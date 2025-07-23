@@ -12,64 +12,51 @@ interface Certification {
 }
 
 interface CertificationCardProps {
-  certification: Certification;
+  certification: {
+    name: string;
+    issuing_body: string;
+    region: string;
+    description: string;
+    classifications: string[];
+    mandatory: boolean;
+    validity: string;
+    official_link: string;
+  };
+  onClick?: () => void;
 }
 
-const CertificationCard = ({ certification }: CertificationCardProps) => {
+const CertificationCard = ({ certification, onClick }: CertificationCardProps) => {
   return (
-    <Card className="h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group cursor-pointer">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-lg font-semibold leading-tight">
-            {certification.certificate_name}
-          </CardTitle>
-          {certification.is_required && (
-            <Badge variant="destructive" className="shrink-0 text-xs">
-              Required
-            </Badge>
+    <div
+      className="h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group cursor-pointer border border-border rounded-xl p-5 bg-card flex flex-col justify-between"
+      onClick={onClick}
+    >
+      <div className="flex flex-col gap-2 mb-2">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-base">{certification.name}</span>
+          {certification.mandatory && (
+            <span className="ml-2 px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Required</span>
           )}
         </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-4 pt-0">
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
-          <p className="text-sm text-foreground leading-relaxed">
-            {certification.certificate_description}
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Legal Regulation</h4>
-          <p className="text-sm text-foreground font-medium">
-            {certification.legal_regulation}
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Legal Text Excerpt</h4>
-          <p className="text-sm text-foreground italic border-l-2 border-primary pl-3">
-            "{certification.legal_text_excerpt}"
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Meaning</h4>
-          <p className="text-sm text-foreground leading-relaxed">
-            {certification.legal_text_meaning}
-          </p>
-        </div>
-
-        <div className="pt-2 border-t border-border">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-muted-foreground">Registration Fee</span>
-            <span className="text-sm font-semibold text-foreground">
-              {certification.registration_fee}
-            </span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        {/* <div className="flex flex-wrap gap-2 mb-2">
+        {certification.classifications?.map((tag, i) => (
+          <span key={i} className="px-2 py-0.5 rounded-full bg-secondary text-xs">{tag}</span>
+        ))}
+      </div> */}
+        <div className="text-xs text-muted-foreground">{certification.issuing_body}</div>
+        <div className="text-xs text-muted-foreground">{certification.region}</div>
+      </div>
+      {/* <div className="mb-2 text-sm text-foreground leading-relaxed">{certification.description}</div> */}
+     
+      <div className="flex flex-col gap-1 mt-auto pt-2 text-xs">
+        <div>Validity: {certification.validity}</div>
+        <div>Mandatory: {certification.mandatory ? 'Yes' : 'No'}</div>
+        <div> Source : {certification.official_link && (
+          <a href={certification.official_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{certification.official_link}</a>
+        )}</div>
+        
+      </div>
+    </div>
   );
 };
 
