@@ -11,7 +11,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="fixed left-0 top-0 h-full w-12 bg-card border-r border-border flex flex-col items-center py-4 space-y-4">
+    <div className="fixed left-0 top-0 h-full w-12 bg-card border-r border-border flex flex-col items-center py-4 space-y-2">
       {sidebarItems.map((item, index) => {
         const Icon = item.icon;
         return (

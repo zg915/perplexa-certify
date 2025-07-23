@@ -69,19 +69,16 @@ const AnswerContent = ({ onNavigateToCertifications }: AnswerContentProps) => {
           </div>
         </div>
 
-        {/* Certifications Section */}
-        <div className="bg-card border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4 text-foreground">Certifications</h2>
-          <div className="space-y-3">
-            {sampleCertifications.map((certification, index) => (
-              <SimplifiedCertification
-                key={index}
-                name={certification.certificate_name}
-                isRequired={certification.is_required}
-                onClick={onNavigateToCertifications}
-              />
-            ))}
-          </div>
+        {/* Individual Certification Cards */}
+        <div className="space-y-3">
+          {sampleCertifications.map((certification, index) => (
+            <SimplifiedCertification
+              key={index}
+              name={certification.certificate_name}
+              isRequired={certification.is_required}
+              onClick={onNavigateToCertifications}
+            />
+          ))}
         </div>
       </div>
     </div>
