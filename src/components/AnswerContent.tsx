@@ -1,6 +1,5 @@
-import CertificationCard from "./CertificationCard";
-
-interface AnswerContentProps {
+import SimplifiedCertification from "./SimplifiedCertification";
+  interface AnswerContentProps {
   onNavigateToCertifications: () => void;
 }
 
@@ -36,8 +35,8 @@ const sampleCertifications = [
 
 const AnswerContent = ({ onNavigateToCertifications }: AnswerContentProps) => {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-6">
-      <div className="prose prose-slate dark:prose-invert max-w-none">
+    <div className="w-full max-w-4xl mx-auto px-4 py-6 pb-24">
+      <div className="space-y-6">
         <div className="bg-card border border-border rounded-xl p-6">
           <p className="text-foreground leading-relaxed mb-4">
             The field of artificial intelligence continues to evolve rapidly with several groundbreaking developments:
@@ -71,17 +70,16 @@ const AnswerContent = ({ onNavigateToCertifications }: AnswerContentProps) => {
         </div>
 
         {/* Certifications Section */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4 text-foreground">Certifications</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-card border border-border rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Certifications</h2>
+          <div className="space-y-3">
             {sampleCertifications.map((certification, index) => (
-              <div 
+              <SimplifiedCertification
                 key={index}
+                name={certification.certificate_name}
+                isRequired={certification.is_required}
                 onClick={onNavigateToCertifications}
-                className="cursor-pointer transform transition-all duration-200 hover:scale-[1.02]"
-              >
-                <CertificationCard certification={certification} />
-              </div>
+              />
             ))}
           </div>
         </div>
