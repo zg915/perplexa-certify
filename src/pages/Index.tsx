@@ -5,6 +5,8 @@ import TabBar from "@/components/TabBar";
 import AnswerContent from "@/components/AnswerContent";
 import CertificationsGrid from "@/components/CertificationsGrid";
 import ChatInput from "@/components/ChatInput";
+import ChatSessions, { type Session } from "@/components/ChatSessions";
+import ConversationHistory from "@/components/ConversationHistory";
 
 interface Flashcard {
   name: string;
@@ -29,15 +31,33 @@ const Index = () => {
   const [certifications, setCertifications] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState(false);
   const [userQuestion, setUserQuestion] = useState("");
+
   const [selectedCertification, setSelectedCertification] = useState<Flashcard | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
+
 
   const handleStream = (ans: string, certs: Flashcard[], isLoading?: boolean, question?: string) => {
     setAnswer(ans);
     setCertifications(certs);
     if (typeof isLoading === 'boolean') setLoading(isLoading);
     if (question) setUserQuestion(question);
+    setViewMode("chat"); // Switch back to chat mode when new response comes
+  };
+
+  const handleChatClick = () => {
+    setShowChatSessions(!showChatSessions);
+  };
+
+  const handleSessionSelect = (session: Session) => {
+    setSelectedSession(session);
+    setViewMode("history");
+    setActiveTab("answer"); // Switch to answer tab to show conversation
+  };
+
+  const handleContinueChat = () => {
+    setViewMode("chat");
+    setSelectedSession(null);
   };
 
   // Handler for clicking a certification pill in AnswerContent
@@ -58,6 +78,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
+
       <Sidebar />
       <div className="flex-1 ml-12 flex flex-col h-screen">
         <SearchHeader userQuestion={userQuestion} />
@@ -79,7 +100,20 @@ const Index = () => {
               answer={answer}
               certifications={certifications}
               loading={loading}
+
             />
+          ) : (
+            <>
+              {activeTab === "certifications" && <CertificationsGrid streamedCertifications={certifications} loading={loading} />}
+              {activeTab === "answer" && (
+                <AnswerContent
+                  onNavigateToCertifications={() => setActiveTab("certifications")}
+                  answer={answer}
+                  certifications={certifications}
+                  loading={loading}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
