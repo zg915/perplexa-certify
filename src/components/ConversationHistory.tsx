@@ -39,47 +39,6 @@ const ConversationHistory = ({ session, onContinueChat, onNavigateToCertificatio
 
   return (
     <div className="w-full">
-      {/* Session Navigation Header */}
-      <div className="bg-card border-b border-border p-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">{session.title}</h2>
-            <p className="text-sm text-muted-foreground">
-              {formatDate(session.date)} • Conversation {currentConversationIndex + 1} of {totalConversations}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToPrevious}
-              disabled={currentConversationIndex === 0}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToNext}
-              disabled={currentConversationIndex === totalConversations - 1}
-            >
-              Next
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-            
-            <Button
-              onClick={onContinueChat}
-              size="sm"
-            >
-              Continue Chat
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Display current conversation using existing components */}
       <SearchHeader userQuestion={currentConversation.question} />
       
