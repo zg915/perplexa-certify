@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 interface Conversation {
   id: string;
   question: string;
+  answer: string;
+  certifications: any[];
   timestamp: Date;
-  preview: string;
 }
 
 interface Session {
@@ -26,14 +27,27 @@ const mockSessions: Session[] = [
       {
         id: "1-1",
         question: "What certifications do I need for nursing?",
-        timestamp: new Date("2024-01-15T10:30:00"),
-        preview: "For nursing positions, you typically need..."
+        answer: "For nursing positions, you typically need several key certifications depending on your role and location. The primary certification is your RN (Registered Nurse) license, which requires completing an accredited nursing program and passing the NCLEX-RN exam. Additional specialized certifications may include BLS (Basic Life Support), ACLS (Advanced Cardiovascular Life Support), and PALS (Pediatric Advanced Life Support).",
+        certifications: [
+          {
+            name: "Registered Nurse (RN) License",
+            issuing_body: "State Board of Nursing",
+            region: "State-specific",
+            description: "Primary license required to practice as a registered nurse",
+            classifications: ["Healthcare", "Nursing"],
+            mandatory: true,
+            validity: "2-3 years (renewal required)",
+            official_link: "https://www.ncsbn.org/"
+          }
+        ],
+        timestamp: new Date("2024-01-15T10:30:00")
       },
       {
         id: "1-2",
         question: "How long does RN certification take?",
-        timestamp: new Date("2024-01-15T11:00:00"),
-        preview: "RN certification typically takes 2-4 years..."
+        answer: "RN certification typically takes 2-4 years depending on the educational path you choose. An Associate Degree in Nursing (ADN) takes about 2-3 years, while a Bachelor of Science in Nursing (BSN) takes 4 years. After graduation, you must pass the NCLEX-RN exam to obtain your license.",
+        certifications: [],
+        timestamp: new Date("2024-01-15T11:00:00")
       }
     ]
   },
@@ -45,27 +59,20 @@ const mockSessions: Session[] = [
       {
         id: "2-1",
         question: "AWS certifications for cloud engineer?",
-        timestamp: new Date("2024-01-10T14:20:00"),
-        preview: "AWS offers several certification paths..."
-      }
-    ]
-  },
-  {
-    id: "3",
-    title: "Finance Certifications",
-    date: new Date("2024-01-08"),
-    conversations: [
-      {
-        id: "3-1",
-        question: "CFA vs CPA certification differences?",
-        timestamp: new Date("2024-01-08T09:15:00"),
-        preview: "CFA focuses on investment analysis while CPA..."
-      },
-      {
-        id: "3-2",
-        question: "How to prepare for CFA Level 1?",
-        timestamp: new Date("2024-01-08T09:45:00"),
-        preview: "CFA Level 1 preparation typically requires..."
+        answer: "AWS offers several certification paths for cloud engineers. The most common starting point is the AWS Certified Solutions Architect - Associate, followed by Professional level certifications. For hands-on roles, consider the AWS Certified SysOps Administrator or DevOps Engineer certifications.",
+        certifications: [
+          {
+            name: "AWS Certified Solutions Architect - Associate",
+            issuing_body: "Amazon Web Services",
+            region: "Global",
+            description: "Validates ability to design distributed systems on AWS",
+            classifications: ["Cloud Computing", "IT"],
+            mandatory: false,
+            validity: "3 years",
+            official_link: "https://aws.amazon.com/certification/"
+          }
+        ],
+        timestamp: new Date("2024-01-10T14:20:00")
       }
     ]
   }
@@ -74,9 +81,10 @@ const mockSessions: Session[] = [
 interface ChatSessionsProps {
   isOpen: boolean;
   onClose: () => void;
+  onSessionSelect: (session: Session) => void;
 }
 
-const ChatSessions = ({ isOpen, onClose }: ChatSessionsProps) => {
+const ChatSessions = ({ isOpen, onClose, onSessionSelect }: ChatSessionsProps) => {
   const [expandedSessions, setExpandedSessions] = useState<Set<string>>(new Set());
 
   const toggleSession = (sessionId: string) => {
@@ -87,6 +95,11 @@ const ChatSessions = ({ isOpen, onClose }: ChatSessionsProps) => {
       newExpanded.add(sessionId);
     }
     setExpandedSessions(newExpanded);
+  };
+
+  const handleSessionClick = (session: Session) => {
+    onSessionSelect(session);
+    onClose();
   };
 
   const formatDate = (date: Date) => {
@@ -128,7 +141,7 @@ const ChatSessions = ({ isOpen, onClose }: ChatSessionsProps) => {
         {mockSessions.map((session) => (
           <div key={session.id} className="border-b border-border">
             <button
-              onClick={() => toggleSession(session.id)}
+              onClick={() => handleSessionClick(session)}
               className="w-full p-4 text-left hover:bg-accent transition-colors flex items-center justify-between"
             >
               <div className="flex-1 min-w-0">
@@ -137,38 +150,8 @@ const ChatSessions = ({ isOpen, onClose }: ChatSessionsProps) => {
                   {formatDate(session.date)} • {session.conversations.length} conversations
                 </p>
               </div>
-              {expandedSessions.has(session.id) ? (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              )}
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </button>
-            
-            {expandedSessions.has(session.id) && (
-              <div className="bg-accent/50">
-                {session.conversations.map((conversation) => (
-                  <div 
-                    key={conversation.id}
-                    className="p-3 mx-4 mb-2 bg-background rounded border border-border hover:bg-accent/50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-start gap-2">
-                      <Clock className="w-3 h-3 text-muted-foreground mt-1 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground line-clamp-2">
-                          {conversation.question}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                          {conversation.preview}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {formatTime(conversation.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -177,3 +160,5 @@ const ChatSessions = ({ isOpen, onClose }: ChatSessionsProps) => {
 };
 
 export default ChatSessions;
+export { mockSessions };
+export type { Session, Conversation };
