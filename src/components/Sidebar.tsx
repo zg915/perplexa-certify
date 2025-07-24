@@ -1,22 +1,27 @@
 import { Sparkles, Home, MessageSquare, Settings, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const Sidebar = () => {
+interface SidebarProps {
+  onChatClick: () => void;
+}
+
+const Sidebar = ({ onChatClick }: SidebarProps) => {
   const sidebarItems = [
-    { icon: Sparkles, active: true },
-    { icon: Home, active: false },
-    { icon: MessageSquare, active: false },
-    { icon: Settings, active: false },
-    { icon: HelpCircle, active: false },
+    { icon: Sparkles, active: true, action: () => {} },
+    { icon: Home, active: false, action: () => {} },
+    { icon: MessageSquare, active: false, action: onChatClick },
+    { icon: Settings, active: false, action: () => {} },
+    { icon: HelpCircle, active: false, action: () => {} },
   ];
 
   return (
-    <div className="fixed left-0 top-0 h-full w-12 bg-card border-r border-border flex flex-col items-center py-4 space-y-1">
+    <div className="fixed left-0 top-0 h-full w-12 bg-card border-r border-border flex flex-col items-center py-4 space-y-1 z-40">
       {sidebarItems.map((item, index) => {
         const Icon = item.icon;
         return (
           <button
             key={index}
+            onClick={item.action}
             className={cn(
               "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
               item.active 

@@ -5,6 +5,7 @@ import TabBar from "@/components/TabBar";
 import AnswerContent from "@/components/AnswerContent";
 import CertificationsGrid from "@/components/CertificationsGrid";
 import ChatInput from "@/components/ChatInput";
+import ChatSessions from "@/components/ChatSessions";
 
 interface Flashcard {
   name: string;
@@ -23,6 +24,7 @@ const Index = () => {
   const [certifications, setCertifications] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState(false);
   const [userQuestion, setUserQuestion] = useState("");
+  const [showChatSessions, setShowChatSessions] = useState(false);
 
   const handleStream = (ans: string, certs: Flashcard[], isLoading?: boolean, question?: string) => {
     setAnswer(ans);
@@ -31,10 +33,14 @@ const Index = () => {
     if (question) setUserQuestion(question);
   };
 
+  const handleChatClick = () => {
+    setShowChatSessions(!showChatSessions);
+  };
+
   return (
     <div className="min-h-screen bg-background flex">
-      <Sidebar />
-      
+      <Sidebar onChatClick={handleChatClick} />
+      <ChatSessions isOpen={showChatSessions} onClose={() => setShowChatSessions(false)} />
 
       <div className="flex-1 ml-12">
         <SearchHeader userQuestion={userQuestion} />
