@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import SearchHeader from "@/components/SearchHeader";
 import TabBar from "@/components/TabBar";
@@ -19,15 +19,23 @@ interface Flashcard {
   official_link: string;
 }
 
+interface QA {
+  question: string;
+  answer: string;
+  certifications: Flashcard[];
+}
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("answer");
   const [answer, setAnswer] = useState("");
   const [certifications, setCertifications] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState(false);
   const [userQuestion, setUserQuestion] = useState("");
-  const [showChatSessions, setShowChatSessions] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [viewMode, setViewMode] = useState<"chat" | "history">("chat");
+
+  const [selectedCertification, setSelectedCertification] = useState<Flashcard | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const feedRef = useRef<HTMLDivElement>(null);
+
 
   const handleStream = (ans: string, certs: Flashcard[], isLoading?: boolean, question?: string) => {
     setAnswer(ans);
@@ -52,25 +60,47 @@ const Index = () => {
     setSelectedSession(null);
   };
 
+  // Handler for clicking a certification pill in AnswerContent
+  const handlePillClick = (cert: Flashcard | null) => {
+    setActiveTab("certifications");
+    if (cert) {
+      setSelectedCertification(cert);
+      setDialogOpen(true);
+    }
+  };
+
+  // Auto-scroll to bottom on new Q&A
+  useEffect(() => {
+    if (feedRef.current) {
+      feedRef.current.scrollTop = feedRef.current.scrollHeight;
+    }
+  }, [certifications, answer, loading]);
+
   return (
     <div className="min-h-screen bg-background flex">
-      <Sidebar onChatClick={handleChatClick} />
-      <ChatSessions 
-        isOpen={showChatSessions} 
-        onClose={() => setShowChatSessions(false)}
-        onSessionSelect={handleSessionSelect}
-      />
 
-      <div className="flex-1 ml-12">
-        {viewMode === "chat" && <SearchHeader userQuestion={userQuestion} />}
-        {viewMode === "chat" && <TabBar activeTab={activeTab} onTabChange={setActiveTab} />}
-        
+      <Sidebar />
+      <div className="flex-1 ml-12 flex flex-col h-screen">
+        <SearchHeader userQuestion={userQuestion} />
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
         <div className="transition-all duration-300">
-          {viewMode === "history" && selectedSession ? (
-            <ConversationHistory 
-              session={selectedSession}
-              onContinueChat={handleContinueChat}
-              onNavigateToCertifications={() => setActiveTab("certifications")}
+          {activeTab === "certifications" && (
+            <CertificationsGrid
+              streamedCertifications={certifications}
+              loading={loading}
+              selectedCertification={selectedCertification}
+              setSelectedCertification={setSelectedCertification}
+              dialogOpen={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            />
+          )}
+          {activeTab === "answer" && (
+            <AnswerContent
+              onCertificationPillClick={handlePillClick}
+              answer={answer}
+              certifications={certifications}
+              loading={loading}
+
             />
           ) : (
             <>
@@ -87,7 +117,6 @@ const Index = () => {
           )}
         </div>
       </div>
-      
       <ChatInput onStream={(ans, certs, isLoading, question) => handleStream(ans, certs, isLoading, question)} />
     </div>
   );

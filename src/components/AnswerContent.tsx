@@ -1,4 +1,4 @@
-import SimplifiedCertification from "./SimplifiedCertification";
+import MiniCertificationCard from "./MiniCertificationCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,13 +14,13 @@ interface Flashcard {
 }
 
 interface AnswerContentProps {
-  onNavigateToCertifications: () => void;
+  onCertificationPillClick: (cert: any) => void;
   answer: string;
-  certifications: Flashcard[];
+  certifications: any[];
   loading?: boolean;
 }
 
-const AnswerContent = ({ onNavigateToCertifications, answer, certifications, loading }: AnswerContentProps) => {
+const AnswerContent = ({ onCertificationPillClick, answer, certifications, loading }: AnswerContentProps) => {
   const maxPills = 3;
   const showMore = certifications.length > maxPills;
   const visibleCerts = certifications.slice(0, maxPills);
@@ -30,34 +30,35 @@ const AnswerContent = ({ onNavigateToCertifications, answer, certifications, loa
         {/* Certification Pills Row */}
         {loading ? (
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-8 w-32 rounded-full bg-muted" />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-col p-4 rounded-xl border border-border bg-card shadow-sm max-w-xs min-w-[220px] h-[140px] space-y-2"
+              >
+                <Skeleton className="h-5 w-3/4 rounded" />
+                <Skeleton className="h-4 w-1/2 rounded" />
+                <Skeleton className="h-4 w-1/3 rounded" />
+                <Skeleton className="h-3 w-full rounded" />
+              </div>
             ))}
           </div>
         ) : certifications.length > 0 && (
           <div className="flex gap-3 overflow-x-auto pb-2">
             {visibleCerts.map((cert, index) => (
-              <div
+              <MiniCertificationCard
                 key={index}
-                className={
-                  "flex items-center px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium whitespace-nowrap shadow-sm transition hover:bg-accent hover:text-accent-foreground" +
-                  (cert.mandatory ? " border-red-400" : "")
-                }
-                onClick={onNavigateToCertifications}
-                style={{ cursor: 'pointer' }}
-              >
-                {cert.name}
-                {cert.mandatory && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Required</span>
-                )}
-              </div>
+                cert={cert}
+                showLink={false}
+                onClick={() => onCertificationPillClick(cert)}
+              />
             ))}
             {showMore && (
               <button
-                onClick={onNavigateToCertifications}
-                className="px-4 py-2 rounded-full border border-border bg-muted text-sm font-medium hover:bg-accent transition"
+                onClick={() => onCertificationPillClick(null)}
+                className="flex flex-col justify-center items-center px-3 py-1.5 rounded-xl border border-border bg-muted text-sm font-medium shadow-sm transition hover:bg-accent hover:text-accent-foreground min-w-[72px]"
               >
-                Show more
+                <span>Show more</span>
+                <span className="text-lg">→</span>
               </button>
             )}
           </div>
