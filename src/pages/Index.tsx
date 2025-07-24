@@ -62,20 +62,20 @@ const Index = () => {
       />
 
       <div className="flex-1 ml-12">
-        <SearchHeader userQuestion={userQuestion} />
-
-        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+        {viewMode === "chat" && <SearchHeader userQuestion={userQuestion} />}
+        {viewMode === "chat" && <TabBar activeTab={activeTab} onTabChange={setActiveTab} />}
         
         <div className="transition-all duration-300">
-          {activeTab === "certifications" && <CertificationsGrid streamedCertifications={certifications} loading={loading} />}
-          {activeTab === "answer" && (
+          {viewMode === "history" && selectedSession ? (
+            <ConversationHistory 
+              session={selectedSession}
+              onContinueChat={handleContinueChat}
+              onNavigateToCertifications={() => setActiveTab("certifications")}
+            />
+          ) : (
             <>
-              {viewMode === "history" && selectedSession ? (
-                <ConversationHistory 
-                  session={selectedSession}
-                  onContinueChat={handleContinueChat}
-                />
-              ) : (
+              {activeTab === "certifications" && <CertificationsGrid streamedCertifications={certifications} loading={loading} />}
+              {activeTab === "answer" && (
                 <AnswerContent
                   onNavigateToCertifications={() => setActiveTab("certifications")}
                   answer={answer}
