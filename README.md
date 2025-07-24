@@ -97,6 +97,12 @@ Each certification object must have:
 - Answers and certifications stream in real time from the backend.
 - Loading spinner is shown while waiting for the backend.
 
+### Real-Time Streaming & Skeleton Loading
+- Certifications appear in the grid as soon as they are received from the backend (true streaming experience).
+- While loading, skeleton cards fill the grid, and are replaced by real cards as data arrives.
+- Each card uses a unique key (the certification name) for correct incremental rendering.
+- The skeletons and cards share a unified design for a smooth, modern look.
+
 ### Certification Pills in Answer Tab
 - Only the first 3 certifications are shown as pills below the answer.
 - If there are more than 3, a "Show more" button appears. Clicking it switches to the Certifications tab to view all certifications.
